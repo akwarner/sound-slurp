@@ -31,7 +31,7 @@ curl -L --fail --progress-bar -o "$RESOURCES/yt-dlp_macos" "$YTDLP_URL"
 chmod +x "$RESOURCES/yt-dlp_macos"
 
 echo "Downloading ffmpeg..."
-tmp="$(mktemp -t soundcloud-ffmpeg.XXXXXX.gz)"
+tmp="$(mktemp -t sound-slurp-ffmpeg.XXXXXX.gz)"
 curl -L --fail --progress-bar -o "$tmp" "$FFMPEG_URL"
 gunzip -c "$tmp" > "$RESOURCES/ffmpeg"
 rm -f "$tmp"
@@ -41,4 +41,3 @@ xattr -d com.apple.quarantine "$RESOURCES/yt-dlp_macos" 2>/dev/null || true
 xattr -d com.apple.quarantine "$RESOURCES/ffmpeg" 2>/dev/null || true
 
 echo "Dependencies ready in $RESOURCES"
-

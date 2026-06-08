@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Sound Slurp logo</title>
+  <desc id="desc">A bold orange mouth and tongue holding a small tab with a download arrow.</desc>
+  <defs>
+    <linearGradient id="lip" x1="88" x2="424" y1="88" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff8a3d"/>
+      <stop offset="0.52" stop-color="#ff5500"/>
+      <stop offset="1" stop-color="#d82800"/>
+    </linearGradient>
+    <linearGradient id="tongue" x1="181" x2="331" y1="198" y2="446" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff8d55"/>
+      <stop offset="0.55" stop-color="#ff5500"/>
+      <stop offset="1" stop-color="#b91f00"/>
+    </linearGradient>
+    <linearGradient id="tab" x1="211" x2="301" y1="270" y2="360" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff7c9"/>
+      <stop offset="1" stop-color="#ffd24e"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#000" flood-opacity="0.38"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="#101010"/>
+  <g filter="url(#shadow)" transform="translate(256 256) scale(1.13) translate(-256 -256)">
+    <path d="M93 184c24-75 91-111 145-86 8 4 14 8 18 13 4-5 10-9 18-13 54-25 121 11 145 86-37 38-99 61-163 61S130 222 93 184z" fill="url(#lip)"/>
+    <path d="M122 194c36-30 87-42 134-20 47-22 98-10 134 20-39 41-87 62-134 62s-95-21-134-62z" fill="#050505"/>
+    <path d="M157 196c31 16 67 25 99 25s68-9 99-25c-15 27-49 48-99 48s-84-21-99-48z" fill="#fff2e8"/>
+    <path d="M182 207c17 28 46 45 74 45s57-17 74-45c11 70 5 148-19 194-15 29-34 43-55 43s-40-14-55-43c-24-46-30-124-19-194z" fill="url(#tongue)"/>
+    <path d="M256 266c-2 42-2 82 0 120" fill="none" stroke="#bf2600" stroke-width="13" stroke-linecap="round" opacity="0.55"/>
+    <path d="M208 251c18 14 35 21 48 21s30-7 48-21" fill="none" stroke="#ffa178" stroke-width="12" stroke-linecap="round" opacity="0.42"/>
+    <g transform="rotate(-8 256 320)">
+      <rect x="210" y="274" width="92" height="92" rx="13" fill="url(#tab)" stroke="#fff7d8" stroke-width="5"/>
+      <path d="M225 291l62 62M287 291l-62 62" stroke="#ffb72f" stroke-width="6" stroke-linecap="round" opacity="0.55"/>
+      <path d="M256 291v37" stroke="#111" stroke-width="14" stroke-linecap="round"/>
+      <path d="M235 318l21 23 21-23" fill="none" stroke="#111" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M235 354h42" stroke="#111" stroke-width="12" stroke-linecap="round"/>
+    </g>
+    <path d="M125 169c19-41 57-64 91-54" stroke="#ffd0b8" stroke-width="13" stroke-linecap="round" opacity="0.55"/>
+    <path d="M292 116c35-10 73 13 91 54" stroke="#ff9f78" stroke-width="12" stroke-linecap="round" opacity="0.35"/>
+  </g>
+</svg>

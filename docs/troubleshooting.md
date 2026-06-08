@@ -21,7 +21,7 @@ This alpha build is not notarized. Try reinstalling from the repo:
 If macOS still blocks it, open Terminal and run:
 
 ```bash
-xattr -dr com.apple.quarantine "/Applications/SoundCloud Downloader.app"
+xattr -dr com.apple.quarantine "/Applications/Sound Slurp.app"
 ```
 
 ## Cookies do not work
@@ -63,5 +63,5 @@ Run the installer again so ffmpeg is downloaded into the app bundle:
 The app writes startup logs here:
 
 ```text
-/tmp/soundcloud-downloader.log
+/tmp/sound-slurp.log
 ```

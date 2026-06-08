@@ -1,4 +1,6 @@
-# SoundCloud Downloader
+# Sound Slurp
+
+![Sound Slurp logo](assets/sound-slurp-logo.svg)
 
 A small macOS app wrapper around [yt-dlp](https://github.com/yt-dlp/yt-dlp) for downloading SoundCloud tracks and playlists.
 
@@ -6,7 +8,7 @@ It runs a local control panel in your browser at `http://127.0.0.1:8765/`, with 
 
 > This is an alpha made for friends. It is not affiliated with SoundCloud. Use it responsibly and only download media you have rights or permission to save.
 
-![SoundCloud Downloader screenshot](assets/screenshots/soundcloud-downloader.png)
+![Sound Slurp screenshot](assets/screenshots/sound-slurp.png)
 
 ## Features
 
@@ -17,7 +19,7 @@ It runs a local control panel in your browser at `http://127.0.0.1:8765/`, with 
 - Playlist range support, such as `1-10` or `5-5`
 - Metadata and artwork embedding
 - Download speed limiting
-- Browser cookie support for private, liked, or age-restricted tracks
+- Browser cookie support for SoundCloud Go+, private, or age-restricted tracks
 - Local-only web UI with live yt-dlp output
 
 ## Quick Install
@@ -31,7 +33,7 @@ Clone or download this repo, then run:
 The installer downloads `yt-dlp_macos` and `ffmpeg`, builds the app wrapper, and installs:
 
 ```text
-/Applications/SoundCloud Downloader.app
+/Applications/Sound Slurp.app
 ```
 
 Open the app from Applications. If a browser tab does not appear, open:
@@ -82,7 +84,7 @@ Rebuild the macOS app:
 Install somewhere other than `/Applications`:
 
 ```bash
-APP_PATH="$HOME/Desktop/SoundCloud Downloader.app" ./scripts/build_app.sh --download
+APP_PATH="$HOME/Desktop/Sound Slurp.app" ./scripts/build_app.sh --download
 ```
 
 ## Troubleshooting

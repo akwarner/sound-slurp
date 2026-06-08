@@ -7,6 +7,6 @@ if [[ ! -x "$ROOT/.local/resources/yt-dlp_macos" || ! -x "$ROOT/.local/resources
   "$ROOT/scripts/download_deps.sh"
 fi
 
-export SOUNDCLOUD_DOWNLOADER_RESOURCES="$ROOT/.local/resources"
-exec /usr/bin/python3 "$ROOT/src/soundcloud_webapp.py"
-
+export SOUND_SLURP_RESOURCES="$ROOT/.local/resources"
+export SOUND_SLURP_ASSETS="$ROOT/assets"
+exec /usr/bin/python3 "$ROOT/src/sound_slurp_webapp.py"

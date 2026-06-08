@@ -9,14 +9,15 @@ from urllib.parse import urlparse
 
 
 HOME = os.path.expanduser("~")
-RESOURCES = os.environ.get("SOUNDCLOUD_DOWNLOADER_RESOURCES", "")
+RESOURCES = os.environ.get("SOUND_SLURP_RESOURCES", "")
 if RESOURCES and os.path.isdir(RESOURCES):
     YTDLP = os.path.join(RESOURCES, "yt-dlp_macos")
     FFMPEG_DIR = RESOURCES
 else:
     YTDLP = os.path.join(HOME, "Downloads", "yt-dlp_macos")
-    FFMPEG_DIR = os.path.join(HOME, "Downloads", "soundcloud")
+    FFMPEG_DIR = os.path.join(HOME, "Downloads", "sound-slurp")
 FFMPEG = os.path.join(FFMPEG_DIR, "ffmpeg")
+ASSET_DIR = os.environ.get("SOUND_SLURP_ASSETS") or (RESOURCES if RESOURCES and os.path.isdir(RESOURCES) else os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "assets")))
 DEFAULT_OUTPUT = os.path.join(HOME, "Downloads")
 DEFAULT_OUTPUT_DISPLAY = "~/Downloads"
 UNSUPPORTED_URL_MESSAGE = (
@@ -65,7 +66,7 @@ HTML = r"""<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SoundCloud Downloader</title>
+<title>Sound Slurp</title>
 <style>
 :root {
   --orange: #ff5500;
@@ -107,6 +108,8 @@ body {
   gap: 24px;
 }
 h1 { margin: 0; font-size: 30px; letter-spacing: 0; }
+.brand-lockup { display: flex; align-items: center; gap: 16px; }
+.logo { width: 72px; height: 72px; border-radius: 18px; box-shadow: 0 10px 28px rgba(0,0,0,.26); }
 .sub { margin-top: 5px; color: rgba(255,255,255,.86); font-size: 14px; }
 .badge {
   border: 1px solid rgba(255,255,255,.4);
@@ -186,6 +189,7 @@ pre {
   .grid, .grid3, .actions { grid-template-columns: 1fr; }
   .hero { align-items: flex-start; flex-direction: column; }
   .app { padding: 14px; }
+  .logo { width: 60px; height: 60px; }
 }
 </style>
 </head>
@@ -194,7 +198,10 @@ pre {
   <section class="shell">
     <header class="hero">
       <div>
-        <h1>SoundCloud Downloader</h1>
+        <div class="brand-lockup">
+          <img class="logo" alt="" src="/assets/sound-slurp-logo.svg">
+          <h1>Sound Slurp</h1>
+        </div>
         <div class="sub">A local yt-dlp control panel for SoundCloud tracks and playlists.</div>
       </div>
       <div class="badge" id="readyBadge">Checking tools...</div>
@@ -462,8 +469,21 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("content-length", str(len(body)))
             self.end_headers()
             self.wfile.write(body)
+        elif self.path == "/assets/sound-slurp-logo.svg":
+            asset_path = os.path.join(ASSET_DIR, "sound-slurp-logo.svg")
+            if not os.path.exists(asset_path):
+                self.send_error(404)
+                return
+            with open(asset_path, "rb") as asset:
+                body = asset.read()
+            self.send_response(200)
+            self.send_header("content-type", "image/svg+xml")
+            self.send_header("cache-control", "no-store")
+            self.send_header("content-length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
         elif self.path == "/api/info":
-            self.send_json({"default_output": DEFAULT_OUTPUT_DISPLAY, "yt_dlp": os.path.exists(YTDLP), "ffmpeg": os.path.exists(FFMPEG)})
+            self.send_json({"app": "Sound Slurp", "default_output": DEFAULT_OUTPUT_DISPLAY, "yt_dlp": os.path.exists(YTDLP), "ffmpeg": os.path.exists(FFMPEG)})
         elif self.path == "/api/status":
             with lock:
                 self.send_json({k: state[k] for k in ("running", "status", "code", "log")})
@@ -482,7 +502,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json({"ok": True})
             return
         if self.path == "/api/choose-folder":
-            script = 'POSIX path of (choose folder with prompt "Save SoundCloud downloads to:")'
+            script = 'POSIX path of (choose folder with prompt "Save Sound Slurp downloads to:")'
             try:
                 result = subprocess.run(["osascript", "-e", script], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 if result.returncode == 0:
@@ -558,7 +578,8 @@ def main():
     except OSError:
         server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
     url = f"http://127.0.0.1:{server.server_port}/"
-    threading.Timer(0.4, lambda: subprocess.Popen(["open", url])).start()
+    if os.environ.get("SOUND_SLURP_NO_AUTO_OPEN") != "1":
+        threading.Timer(0.4, lambda: subprocess.Popen(["open", url])).start()
     server.serve_forever()
 
 
