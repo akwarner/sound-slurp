@@ -5,6 +5,7 @@ import re
 import subprocess
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import urlparse
 
 
 HOME = os.path.expanduser("~")
@@ -18,6 +19,10 @@ else:
 FFMPEG = os.path.join(FFMPEG_DIR, "ffmpeg")
 DEFAULT_OUTPUT = os.path.join(HOME, "Downloads")
 DEFAULT_OUTPUT_DISPLAY = "~/Downloads"
+UNSUPPORTED_URL_MESSAGE = (
+    "Supported SoundCloud URLs are single tracks and /sets/ playlists only. "
+    "Artist pages, likes pages, and reposts pages are intentionally blocked."
+)
 
 state = {
     "running": False,
@@ -27,6 +32,32 @@ state = {
     "process": None,
 }
 lock = threading.Lock()
+
+
+def classify_soundcloud_url(raw_url):
+    candidate = raw_url.strip()
+    if not candidate:
+        return None, "Paste a SoundCloud URL first"
+    if "://" not in candidate:
+        candidate = "https://" + candidate
+
+    parsed = urlparse(candidate)
+    host = parsed.netloc.lower()
+    if host.startswith("www."):
+        host = host[4:]
+    if host not in {"soundcloud.com", "m.soundcloud.com"}:
+        return None, "Paste a SoundCloud URL from soundcloud.com"
+
+    parts = [part for part in parsed.path.split("/") if part]
+    if len(parts) >= 3 and parts[1] == "sets":
+        return "playlist", None
+    if len(parts) == 2 and parts[1] in {"likes", "reposts"}:
+        return None, UNSUPPORTED_URL_MESSAGE
+    if len(parts) == 1:
+        return None, UNSUPPORTED_URL_MESSAGE
+    if len(parts) == 2:
+        return "track", None
+    return None, UNSUPPORTED_URL_MESSAGE
 
 
 HTML = r"""<!doctype html>
@@ -164,7 +195,7 @@ pre {
     <header class="hero">
       <div>
         <h1>SoundCloud Downloader</h1>
-        <div class="sub">A local yt-dlp control panel for tracks, playlists, likes, and reposts.</div>
+        <div class="sub">A local yt-dlp control panel for SoundCloud tracks and playlists.</div>
       </div>
       <div class="badge" id="readyBadge">Checking tools...</div>
     </header>
@@ -173,7 +204,7 @@ pre {
       <section class="card">
         <label for="url">SoundCloud URL</label>
         <input id="url" placeholder="https://soundcloud.com/artist/track">
-        <div class="hint">Track: /artist/track | Playlist: /artist/sets/name | Artist: /artist | Likes: /artist/likes | Reposts: /artist/reposts</div>
+        <div class="hint">Supported: single tracks like /artist/track, track links with ?in=playlist, and playlists like /artist/sets/name.</div>
         <div class="hint detect" id="detected"></div>
       </section>
 
@@ -201,8 +232,8 @@ pre {
       <section class="card grid3">
         <div>
           <label>Playlist / Collection</label>
-          <div class="checks"><label class="check"><input type="checkbox" id="playlist"> Download entire playlist</label></div>
-          <div class="hint">Auto-enabled for sets, artist pages, likes, and reposts.</div>
+          <div class="checks"><label class="check"><input type="checkbox" id="playlist"> Playlist URL detected</label></div>
+          <div class="hint">Only /sets/ playlist URLs can download multiple tracks. Likes, reposts, and artist pages are blocked.</div>
         </div>
         <div>
           <label for="range">Track Range</label>
@@ -232,7 +263,7 @@ pre {
           <div class="hint">Useful on shared networks or to avoid SoundCloud rate limiting.</div>
         </div>
         <div>
-          <label>Browser Cookies</label>
+          <label>Browser Cookies / Go+</label>
           <div class="checks">
             <label class="check"><input type="checkbox" id="useCookies"> Use cookies from</label>
             <select id="browser" style="max-width: 220px">
@@ -246,7 +277,7 @@ pre {
               <option>Vivaldi</option>
             </select>
           </div>
-          <div class="hint">For private/liked tracks, close the browser first and pick the profile logged into SoundCloud.</div>
+          <div class="hint">Use browser cookies if you have SoundCloud Go+ or need private/age-restricted tracks. Close the browser first.</div>
         </div>
       </section>
 
@@ -278,13 +309,33 @@ async function init() {
 function detect() {
   const raw = $('url').value.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split(/[?#]/)[0].replace(/\/$/, '');
   const out = $('detected');
+  $('playlist').checked = false;
+  $('playlist').disabled = true;
+  $('range').disabled = true;
   if (!raw) { out.textContent = ''; return; }
   if (!raw.startsWith('soundcloud.com/')) { out.textContent = 'Paste a SoundCloud URL'; return; }
   const seg = raw.replace('soundcloud.com/', '').split('/');
-  if (seg.length === 1) { out.textContent = 'Detected: Artist page - all tracks'; $('playlist').checked = true; }
-  else if (seg.length >= 3 && seg[1] === 'sets') { out.textContent = 'Detected: Playlist / Set'; $('playlist').checked = true; }
-  else if (seg.length === 2 && ['likes','reposts'].includes(seg[1])) { out.textContent = `Detected: ${seg[1]} - cookies may be needed`; $('playlist').checked = true; }
-  else if (seg.length === 2) { out.textContent = 'Detected: Single track'; $('playlist').checked = false; }
+  if (seg.length >= 3 && seg[1] === 'sets') {
+    out.textContent = 'Detected: Playlist / Set';
+    $('playlist').checked = true;
+    $('range').disabled = false;
+  }
+  else if (seg.length === 2 && ['likes','reposts'].includes(seg[1])) {
+    out.textContent = `${seg[1][0].toUpperCase() + seg[1].slice(1)} pages are blocked to avoid huge downloads. Paste a single track or /sets/ playlist.`;
+    $('playlist').checked = false;
+  }
+  else if (seg.length === 1) {
+    out.textContent = 'Artist pages are blocked. Paste a single track or /sets/ playlist.';
+    $('playlist').checked = false;
+  }
+  else if (seg.length === 2) {
+    out.textContent = 'Detected: Single track';
+    $('playlist').checked = false;
+  }
+  else {
+    out.textContent = 'Unsupported SoundCloud URL. Paste a single track or /sets/ playlist.';
+    $('playlist').checked = false;
+  }
 }
 
 function payload() {
@@ -459,6 +510,10 @@ class Handler(BaseHTTPRequestHandler):
         if not url:
             self.send_json({"ok": False, "error": "Paste a SoundCloud URL first"}, 400)
             return
+        url_kind, url_error = classify_soundcloud_url(url)
+        if url_error:
+            self.send_json({"ok": False, "error": url_error}, 400)
+            return
         output = os.path.expanduser((data.get("output") or DEFAULT_OUTPUT).strip())
         os.makedirs(output, exist_ok=True)
 
@@ -484,7 +539,7 @@ class Handler(BaseHTTPRequestHandler):
             args += ["--cookies-from-browser", browser_arg(data.get("browser") or "Chrome (Default)")]
         if os.path.exists(FFMPEG):
             args += ["--ffmpeg-location", FFMPEG_DIR]
-        if data.get("playlist"):
+        if url_kind == "playlist":
             if (data.get("range") or "").strip():
                 args += ["--playlist-items", data["range"].strip()]
             args += ["-o", os.path.join(output, "%(playlist_index)02d - %(uploader)s - %(title)s.%(ext)s")]

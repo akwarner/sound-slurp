@@ -1,6 +1,6 @@
 # SoundCloud Downloader
 
-A small macOS app wrapper around [yt-dlp](https://github.com/yt-dlp/yt-dlp) for downloading SoundCloud tracks, playlists, artist pages, likes, and reposts.
+A small macOS app wrapper around [yt-dlp](https://github.com/yt-dlp/yt-dlp) for downloading SoundCloud tracks and playlists.
 
 It runs a local control panel in your browser at `http://127.0.0.1:8765/`, with a SoundCloud-inspired interface and live download logs.
 
@@ -10,7 +10,8 @@ It runs a local control panel in your browser at `http://127.0.0.1:8765/`, with 
 
 ## Features
 
-- SoundCloud URL detection for tracks, sets, artist pages, likes, and reposts
+- SoundCloud URL detection for single tracks and `/sets/` playlists
+- Track links with playlist context, such as URLs containing `?in=...`
 - Best original audio by default
 - Optional MP3, FLAC, and OGG conversion through ffmpeg
 - Playlist range support, such as `1-10` or `5-5`
@@ -41,7 +42,7 @@ http://127.0.0.1:8765/
 
 ## Cookies
 
-For private tracks, liked tracks, or age-restricted content:
+Use browser cookies if you have **SoundCloud Go+**. Go+ access, private tracks, and age-restricted tracks may depend on your logged-in browser session.
 
 1. Log into SoundCloud in your browser.
 2. Close that browser.
@@ -49,6 +50,16 @@ For private tracks, liked tracks, or age-restricted content:
 4. Pick the profile where you are logged in, usually **Chrome (Default)**.
 
 The app does not store or upload cookies. It passes the selected browser profile to yt-dlp locally.
+
+## Supported URLs
+
+The app intentionally supports only:
+
+- Single tracks: `https://soundcloud.com/artist/track`
+- Single track links with playlist context appended, such as `?in=artist/sets/playlist`
+- Playlists/sets: `https://soundcloud.com/artist/sets/playlist`
+
+The app blocks whole artist pages, likes pages, and reposts pages. Those pages can contain thousands of tracks and are too easy to start accidentally.
 
 ## Quality Notes
 
@@ -77,4 +88,3 @@ APP_PATH="$HOME/Desktop/SoundCloud Downloader.app" ./scripts/build_app.sh --down
 ## Troubleshooting
 
 See [docs/troubleshooting.md](docs/troubleshooting.md).
-

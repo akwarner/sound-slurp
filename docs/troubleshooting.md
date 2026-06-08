@@ -26,13 +26,25 @@ xattr -dr com.apple.quarantine "/Applications/SoundCloud Downloader.app"
 
 ## Cookies do not work
 
+Use browser cookies if you have SoundCloud Go+. Go+ playback, private tracks, and age-restricted tracks may require the same logged-in browser session you use on soundcloud.com.
+
 For Chrome, choose the profile where you are logged into SoundCloud. Most people should start with:
 
 ```text
 Chrome (Default)
 ```
 
-Close Chrome before downloading private, liked, or age-restricted tracks. Chromium browsers can lock their cookie database while running.
+Close Chrome before downloading Go+, private, or age-restricted tracks. Chromium browsers can lock their cookie database while running.
+
+## Likes, reposts, and artist pages are blocked
+
+This is intentional. Likes, reposts, and artist pages can contain thousands of tracks, which makes accidental huge downloads too easy.
+
+Use one of these instead:
+
+- A single track URL
+- A single track URL with playlist context appended
+- A `/sets/` playlist URL
 
 ## Downloads are lower quality than expected
 
@@ -53,4 +65,3 @@ The app writes startup logs here:
 ```text
 /tmp/soundcloud-downloader.log
 ```
-
