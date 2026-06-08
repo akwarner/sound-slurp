@@ -272,7 +272,7 @@ pre {
         <div>
           <label>Browser Cookies / Go+</label>
           <div class="checks">
-            <label class="check"><input type="checkbox" id="useCookies"> Use cookies from</label>
+            <label class="check"><input type="checkbox" id="useCookies" checked> Use cookies from</label>
             <select id="browser" style="max-width: 220px">
               <option>Chrome (Default)</option>
               <option>Chrome (Profile 1)</option>
@@ -290,7 +290,7 @@ pre {
 
       <section class="actions">
         <div class="status" id="status">Ready.</div>
-        <button id="download">Download</button>
+        <button id="download">SLURP (Download)</button>
       </section>
 
       <section class="card">
@@ -385,7 +385,7 @@ async function refresh() {
   $('status').className = 'status' + (data.running ? ' warn' : data.code === 0 ? ' good' : data.code ? ' bad' : '');
   $('log').textContent = data.log;
   $('log').scrollTop = $('log').scrollHeight;
-  $('download').textContent = data.running ? 'Cancel' : 'Download';
+  $('download').textContent = data.running ? 'Cancel' : 'SLURP (Download)';
   $('download').className = data.running ? 'cancel' : '';
 }
 

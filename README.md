@@ -48,7 +48,7 @@ Use browser cookies if you have **SoundCloud Go+**. Go+ access, private tracks, 
 
 1. Log into SoundCloud in your browser.
 2. Close that browser.
-3. Enable **Use cookies from** in the app.
+3. Leave **Use cookies from** enabled in the app.
 4. Pick the profile where you are logged in, usually **Chrome (Default)**.
 
 The app does not store or upload cookies. It passes the selected browser profile to yt-dlp locally.
