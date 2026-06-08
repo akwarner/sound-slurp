@@ -1,0 +1,17 @@
+.DS_Store
+__pycache__/
+*.pyc
+
+# Local downloaded runtime assets
+.local/
+
+# Built macOS app bundles and release archives
+*.app/
+*.dmg
+*.zip
+
+# Local logs/screenshots
+*.log
+open.stderr*.log
+open.stdout*.log
+
