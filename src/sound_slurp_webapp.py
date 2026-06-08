@@ -437,7 +437,12 @@ def run_download(command, output_dir):
             state["running"] = False
             state["code"] = code
             state["process"] = None
-            state["status"] = "Done. Saved to " + output_dir if code == 0 else f"Download failed with exit code {code}"
+            if code == 0:
+                state["status"] = "Done. Saved to " + output_dir
+            elif "DRM protected" in state["log"]:
+                state["status"] = "Cannot download DRM-protected SoundCloud track"
+            else:
+                state["status"] = f"Download failed with exit code {code}"
         if code == 0:
             subprocess.Popen(["open", output_dir])
     except Exception as exc:

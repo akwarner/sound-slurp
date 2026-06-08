@@ -36,6 +36,16 @@ Chrome (Default)
 
 Close Chrome before downloading Go+, private, or age-restricted tracks. Chromium browsers can lock their cookie database while running.
 
+## SoundCloud says 404 or DRM protected
+
+Run the installer again so Sound Slurp gets the latest yt-dlp nightly build:
+
+```bash
+./install.sh
+```
+
+Some SoundCloud Go+ or licensed tracks are DRM-protected. Browser cookies can prove that you are logged in, but yt-dlp still cannot download DRM-protected streams.
+
 ## Likes, reposts, and artist pages are blocked
 
 This is intentional. Likes, reposts, and artist pages can contain thousands of tracks, which makes accidental huge downloads too easy.

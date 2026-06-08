@@ -24,9 +24,22 @@ case "$ARCH" in
     ;;
 esac
 
-YTDLP_URL="https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos"
+YTDLP_CHANNEL="${YT_DLP_CHANNEL:-nightly}"
+case "$YTDLP_CHANNEL" in
+  nightly)
+    YTDLP_URL="https://github.com/yt-dlp/yt-dlp-nightly-builds/releases/latest/download/yt-dlp_macos"
+    ;;
+  stable)
+    YTDLP_URL="https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos"
+    ;;
+  *)
+    echo "Unsupported yt-dlp channel: $YTDLP_CHANNEL" >&2
+    echo "Use YT_DLP_CHANNEL=nightly or YT_DLP_CHANNEL=stable." >&2
+    exit 1
+    ;;
+esac
 
-echo "Downloading yt-dlp..."
+echo "Downloading yt-dlp ($YTDLP_CHANNEL)..."
 curl -L --fail --progress-bar -o "$RESOURCES/yt-dlp_macos" "$YTDLP_URL"
 chmod +x "$RESOURCES/yt-dlp_macos"
 

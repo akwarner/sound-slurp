@@ -81,6 +81,12 @@ Rebuild the macOS app:
 ./scripts/build_app.sh --download --open
 ```
 
+The installer uses yt-dlp nightly builds by default because SoundCloud extractor fixes often land there first. To install the latest stable yt-dlp release instead:
+
+```bash
+YT_DLP_CHANNEL=stable ./scripts/build_app.sh --download
+```
+
 Install somewhere other than `/Applications`:
 
 ```bash
